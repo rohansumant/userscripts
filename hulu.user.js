@@ -9,16 +9,32 @@
 // @grant        none
 // ==/UserScript==
 
+const api_key = "insert API key here";
+var timer;
+
+function init() {
+    window.addEventListener('wheel', (e)=> {
+        console.log('Scrolling');
+        //delay timer by another second
+        clearTimeout(timer);
+        timer = setTimeout(tagImages,1000);
+    });
+}
+
 (function() {
   'use strict';
-  //document.body.remove()
-  setTimeout(cb,10000);
-  // Your code here...
+   window.onload = init;
 })();
 
-function cb() {
+function tagImages() {
   let imgs = document.getElementsByTagName('img');
   for(let i=0;i<imgs.length;i++) {
-    console.log(imgs[i].alt);
+    let img = imgs[i];
+    let fallbackString = img.alt;
+    let prefix = "Cover art for ";
+    if(fallbackString && fallbackString.startsWith(prefix)) {
+      let title_name = fallbackString.substr(prefix.length-1);
+      console.log('Found ',title_name);
+    }
   }
 }
