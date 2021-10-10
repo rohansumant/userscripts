@@ -13,18 +13,19 @@ const api_key = "insert API key here";
 var timer;
 
 function init() {
-    window.addEventListener('wheel', (e)=> {
-        console.log('Scrolling');
-        //delay timer by another second
-        clearTimeout(timer);
-        timer = setTimeout(tagImages,1000);
-    });
+  //load up Axios
+  let axios_el = document.createElement('script');
+  axios_el.setAttribute('src','https://unpkg.com/axios/dist/axios.min.js');
+  document.head.appendChild(my_awesome_script);
+
+  window.addEventListener('wheel', (e)=> {
+    console.log('Scrolling');
+    //delay timer by another second
+    clearTimeout(timer);
+    timer = setTimeout(tagImages,1000);
+  });
 }
 
-(function() {
-  'use strict';
-   window.onload = init;
-})();
 
 function tagImages() {
   let imgs = document.getElementsByTagName('img');
@@ -38,3 +39,9 @@ function tagImages() {
     }
   }
 }
+
+(function() {
+  'use strict';
+  window.onload = init;
+})();
+
