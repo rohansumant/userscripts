@@ -67,7 +67,8 @@ function onScrollStop() {
       });
     }
   }
-  // Nothing to do but wait
+
+  // When everything is done, print out ratings on console.
   Promise.allSettled(promises)
     .then(v => {
       printRatings(titles);
@@ -91,10 +92,10 @@ function main() {
   });
 
   // 3. Dump DB on exit
-  window.onbeforeunload = () => {
+  window.addEventListener('beforeunload', () => {
     let globalMovieDBString = JSON.stringify(globalMovieDB);
     localStorage.setItem('movieDB',globalMovieDBString);
-  }
+  });
 
 }
 
