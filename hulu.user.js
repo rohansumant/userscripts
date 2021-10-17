@@ -6,12 +6,13 @@
 // @author       You
 // @match        https://www.hulu.com/*
 // @require      https://unpkg.com/axios/dist/axios.min.js
+// @require      https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
 // ==/UserScript==
 
 const APIDomain = "https://www.omdbapi.com" // http://www.omdbapi.com/?apikey=[yourkey]&
-const apiKey = "Insert your API key here";
+const apiKey = "Insert API key here";
 let globalMovieDB;
 let timer;
 
@@ -36,7 +37,7 @@ function loadMovieDB() {
 
 
 function fetchTitles() {
-  let imgs = document.getElementsByTagName('img');
+  let imgs = $('img');
   let titles = [];
   for(let i=0;i<imgs.length;i++) {
     let img = imgs[i];
@@ -45,7 +46,7 @@ function fetchTitles() {
     if(fallbackString && fallbackString.startsWith(prefix)) {
       let title_name = fallbackString.substr(prefix.length-1);
       // console.log('Found ',title_name);
-      titles.push(title_name);
+      titles.push({'title': title_name, 'elem': img});
     }
   }
   return titles;
@@ -55,7 +56,8 @@ function onScrollStop() {
   let titles = fetchTitles();
   let promises = [];
   for(let i=0;i<titles.length;i++) {
-    let title = titles[i];
+    let title = titles[i].title;
+    let elem = titles[i].elem;
     if(!(title in globalMovieDB.movies)) {
       let pr = axios.get(APIDomain, {params: {'apikey': apiKey, 't': title }});
       promises.push(pr);
@@ -77,9 +79,39 @@ function onScrollStop() {
     .catch(e => {console.log("Error ",e)});
 }
 
+function printRatings(titles) {
+  for(let i=0;i<titles.length;i++) {
+    let title = titles[i].title;
+    let rating = undefined;
+    if(title in globalMovieDB.movies) {
+      rating = globalMovieDB.movies[title];
+      console.log(title,' ', rating);
+    }
+    let elem = titles[i].elem;
+    let parentDiv = elem.closest('div');
+
+    let childDiv = $('<div></div>')[0];
+    let cssAttributes = {
+        'color': 'red',
+        'position': 'absolute',
+        'height': '30px',
+        'width': '30px',
+        'background-color': '#555',
+        'border-radius': '50%',
+        'top': '0px',
+        'left': '0px',
+        'text-align': 'center'
+    };
+    for(const key in cssAttributes) {
+        childDiv.style[key] = cssAttributes[key];
+    }
+    //childDiv.style = cssAttributes;
+    childDiv.innerHTML= rating;
+    parentDiv.appendChild(childDiv);
+  }
+}
 
 function main() {
-
   //1. Load Movie DB
   loadMovieDB();
 
@@ -96,17 +128,8 @@ function main() {
     let globalMovieDBString = JSON.stringify(globalMovieDB);
     localStorage.setItem('movieDB',globalMovieDBString);
   });
-
 }
 
-function printRatings(titles) {
-  for(let i=0;i<titles.length;i++) {
-    let title = titles[i];
-    if(title in globalMovieDB.movies) {
-      console.log(title,' ',globalMovieDB.movies[title]);
-    }
-  }
-}
 
 (function() {
   'use strict';
