@@ -92,7 +92,7 @@ function printRatings(titles) {
 
     let childDiv = $('<div></div>')[0];
     let cssAttributes = {
-      'color': 'red',
+      'color': 'yellow',
       'position': 'absolute',
       'height': '30px',
       'width': '30px',
@@ -100,7 +100,8 @@ function printRatings(titles) {
       'border-radius': '50%',
       'top': '0px',
       'left': '0px',
-      'text-align': 'center'
+      'text-align': 'center',
+      'font-weight': 'bolder'
     };
     for(const key in cssAttributes) {
       childDiv.style[key] = cssAttributes[key];
