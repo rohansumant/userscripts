@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
-// @author       You
+// @author       Rohan Sumant
 // @match        https://www.hulu.com/*
 // @require      https://unpkg.com/axios/dist/axios.min.js
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js
@@ -87,10 +87,18 @@ function printRatings(titles) {
       rating = globalMovieDB.movies[title];
       console.log(title,' ', rating);
     }
+    if(rating == undefined || rating == 'N/A') {
+      rating = '?';
+    }
     let elem = titles[i].elem;
     let parentDiv = elem.closest('div');
+    let currLastChild = parentDiv.lastElementChild;
+    if(currLastChild && currLastChild.id == 'ratings') {
+      // This title has already been tagged.
+      continue;
+    }
 
-    let childDiv = $('<div></div>')[0];
+    let childDiv = $('<div id="ratings"></div>')[0];
     let cssAttributes = {
       'color': 'yellow',
       'position': 'absolute',
@@ -106,7 +114,6 @@ function printRatings(titles) {
     for(const key in cssAttributes) {
       childDiv.style[key] = cssAttributes[key];
     }
-    //childDiv.style = cssAttributes;
     childDiv.innerHTML= rating;
     parentDiv.appendChild(childDiv);
   }
