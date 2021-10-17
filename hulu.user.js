@@ -12,8 +12,8 @@
 // ==/UserScript==
 
 const APIDomain = "https://www.omdbapi.com" // http://www.omdbapi.com/?apikey=[yourkey]&
-const apiKey = "Insert API key here";
 let globalMovieDB;
+let apiKey;
 let timer;
 
 function loadMovieDB() {
@@ -92,18 +92,18 @@ function printRatings(titles) {
 
     let childDiv = $('<div></div>')[0];
     let cssAttributes = {
-        'color': 'red',
-        'position': 'absolute',
-        'height': '30px',
-        'width': '30px',
-        'background-color': '#555',
-        'border-radius': '50%',
-        'top': '0px',
-        'left': '0px',
-        'text-align': 'center'
+      'color': 'red',
+      'position': 'absolute',
+      'height': '30px',
+      'width': '30px',
+      'background-color': '#555',
+      'border-radius': '50%',
+      'top': '0px',
+      'left': '0px',
+      'text-align': 'center'
     };
     for(const key in cssAttributes) {
-        childDiv.style[key] = cssAttributes[key];
+      childDiv.style[key] = cssAttributes[key];
     }
     //childDiv.style = cssAttributes;
     childDiv.innerHTML= rating;
@@ -112,10 +112,19 @@ function printRatings(titles) {
 }
 
 function main() {
-  //1. Load Movie DB
+  // Fetch API key
+  apiKey = localStorage.getItem('apiKey');
+  if(!apiKey) {
+    apiKey = window.prompt('Please enter your OMDB API key.');
+    if(apiKey) {
+      localStorage.setItem('apiKey',apiKey);
+    }
+  }
+
+  // Load Movie DB
   loadMovieDB();
 
-  //2. On every scroll, fetch titles currently in view.
+  // On every scroll, fetch titles currently in view.
   window.addEventListener('wheel', (e)=> {
     // console.log('Scrolling');
     // delay timer by another second
@@ -123,7 +132,7 @@ function main() {
     timer = setTimeout(onScrollStop,1000);
   });
 
-  // 3. Dump DB on exit
+  // Dump DB on exit
   window.addEventListener('beforeunload', () => {
     let globalMovieDBString = JSON.stringify(globalMovieDB);
     localStorage.setItem('movieDB',globalMovieDBString);
